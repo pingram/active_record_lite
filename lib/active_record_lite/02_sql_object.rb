@@ -6,35 +6,14 @@ require 'active_support/inflector'
 class MassObject
   def self.parse_all(results)
     new_objects = []
-    # self is class
-
-    # p self.methods.count
-    # # make attribute accessors for each column
-    # # self.make_attr_accessors(self.columns)
-    # p self.methods.count
 
     results.each do |hash|
 
       new_objects << self.new(hash)
-    #   new_obj = self.new
-
-    #   # debugger
-
-    #   hash.each do |attr, val|
-    #     inst_var = "@" + attr.to_s
-    #     instance_variable_set(inst_var, val)
-    #   end
-
-    #   new_objects << new_obj
-    # end
 
     end
     new_objects
   end
-
-  # def self.make_attr_accessors(columns_arr)
-
-  # end
 
 end
 
@@ -44,21 +23,15 @@ class SQLObject < MassObject
 
     columns = result.first.map(&:to_sym)
 
-    # p self.methods.count
     columns.each do |name|
       define_method(name) do
         attributes[name]
       end
 
-      # p name
-      # puts "made getter '#{name}' for #{self}"
-
       define_method("#{name}=".to_sym) do |arg|
         attributes[name] = arg
       end
-      # puts "made setter '#{name}' for #{self}"
     end
-    # p self.methods.count
 
     columns
   end
@@ -89,13 +62,15 @@ class SQLObject < MassObject
   end
 
   def initialize(hash)
+    # need to call columns so that we have attr_accessors XXX is this true?
     columns = self.class.columns
-    # columns_s = columns.map(&:to_s)
-    # p columns_s
-    hash.each do |attr, val|
-      inst_var = "@" + attr.to_s
-      instance_variable_set(inst_var, val)
-    end
+
+    @attributes = hash
+
+    # hash.each do |attr, val|
+      # inst_var = "@" + attr.to_s
+      # instance_variable_set(inst_var, val)
+    # end
   end
 
   def save
@@ -120,10 +95,13 @@ hashes = [
         { name: 'cat2', owner_id: 2 }
       ]
 
-# cats = Cat.parse_all(hashes)
+cats = Cat.parse_all(hashes)
+p cats
+p cats[0].name
 
-c = Cat.new(name: 'cat1', owner_id: 1)
-p c
+
+# c = Cat.new(name: 'cat1', owner_id: 1)
+# p c
 
 # Cat.columns
 # p cats.first.methods.sort
