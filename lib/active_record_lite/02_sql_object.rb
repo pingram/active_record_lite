@@ -96,14 +96,11 @@ class SQLObject < MassObject
     self.id = Cat.all.last.id
   end
 
-  def initialize(hash)
+  def initialize(hash = {})
     # need to call columns so that we have attr_accessors XXX is this true?
     columns = self.class.columns
 
-    # @attributes = hash
-
     @attributes = {}
-
     @attributes[:id] = nil
 
     hash.each do |attr, val|
@@ -112,7 +109,11 @@ class SQLObject < MassObject
   end
 
   def save
-    # ...
+    if self.id.nil?
+      insert
+    else
+      update
+    end
   end
 
   def update
@@ -150,45 +151,3 @@ class SQLObject < MassObject
     attribute_values
   end
 end
-
-class Cat < SQLObject
-end
-
-
-
-
-
-# c = Cat.new      # puts "made setter '#{name}' for #{self}"
-hashes = [
-        { name: 'cat1', owner_id: 1 },
-        { name: 'cat2', owner_id: 2 }
-      ]
-
-cats = Cat.parse_all(hashes)
-class Human < SQLObject
-      self.table_name = 'humans'
-    end
-# p Human.columns
-
-# puts
-# puts
-# cats[0].insert
-# p Cat.all
-# cats[0].name = 'roy'
-# cats[0].update
-# p Cat.all
-# p cats
-# p cats[0].name
-# p Cat.all[0].name
-# puts
-# puts
-# p Cat.find(1)
-
-
-# c = Cat.new(name: 'cat1', owner_id: 1)
-# p c
-
-# Cat.columns
-# p cats.first.methods.sort
-# Cat.columns
-# p cats.first.name
