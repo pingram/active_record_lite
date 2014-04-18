@@ -19,7 +19,7 @@ end
 
 class SQLObject < MassObject
   def self.columns
-    result = DBConnection.instance.execute2("SELECT * FROM cats LIMIT 1")
+    result = DBConnection.instance.execute2("SELECT * FROM #{self.table_name} LIMIT 1")
 
     columns = result.first.map(&:to_sym)
 
@@ -82,7 +82,7 @@ class SQLObject < MassObject
   def insert
     table_n = self.class.table_name
     col_names = self.class.columns.map(&:to_s)[1..-1].join(', ')
-    attr_values = self.attribute_values
+    attr_values = self.attribute_values[1..-1]
     question_marks = (["?"] * attr_values.count).join(', ')
 
     query = <<-SQL
@@ -104,6 +104,8 @@ class SQLObject < MassObject
 
     @attributes = {}
 
+    @attributes[:id] = nil
+
     hash.each do |attr, val|
       @attributes[attr.to_sym] = val
     end
@@ -114,12 +116,32 @@ class SQLObject < MassObject
   end
 
   def update
-    # ...
+    table_n = self.class.table_name
+    id = self.attribute_values.first
+    attr_values = self.attribute_values[1..-1]
+
+    query_vals = attr_values + [id]
+
+    set_line = self.class.columns[1..-1].map do |col|
+      "#{col.to_s} = ?"
+    end.join(', ')
+
+    query = <<-SQL
+      UPDATE
+        #{table_n}
+      SET
+        #{set_line}
+      WHERE
+        id = ?
+    SQL
+
+    DBConnection.instance.execute(query, query_vals)
   end
 
   # returns an array of all the column names
   def attribute_values
     attribute_values = []
+    # p @attributes
 
     attributes.each do |key, val|
       attribute_values << val
@@ -143,8 +165,18 @@ hashes = [
       ]
 
 cats = Cat.parse_all(hashes)
+class Human < SQLObject
+      self.table_name = 'humans'
+    end
+# p Human.columns
 
-cats[0].insert
+# puts
+# puts
+# cats[0].insert
+# p Cat.all
+# cats[0].name = 'roy'
+# cats[0].update
+# p Cat.all
 # p cats
 # p cats[0].name
 # p Cat.all[0].name

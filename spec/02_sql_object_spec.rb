@@ -54,33 +54,33 @@ describe SQLObject do
   #   end
   # end
 
-  describe '#insert' do
-    let(:cat) { Cat.new(name: 'Gizmo', owner_id: 1) }
+  # describe '#insert' do
+  #   let(:cat) { Cat.new(name: 'Gizmo', owner_id: 1) }
 
-    before(:each) { cat.insert }
+  #   before(:each) { cat.insert }
 
-    it '#attribute_values returns array of values' do
-      cat = Cat.new(id: 123, name: 'cat1', owner_id: 1)
+  #   it '#attribute_values returns array of values' do
+  #     cat = Cat.new(id: 123, name: 'cat1', owner_id: 1)
 
-      expect(cat.attribute_values).to eq([123, 'cat1', 1])
-    end
+  #     expect(cat.attribute_values).to eq([123, 'cat1', 1])
+  #   end
 
-    it '#insert inserts a new record' do
-      expect(Cat.all.count).to eq(5)
-    end
+  #   it '#insert inserts a new record' do
+  #     expect(Cat.all.count).to eq(5)
+  #   end
 
-    it '#insert sets the id' do
-      expect(cat.id).to_not be_nil
-    end
+  #   it '#insert sets the id' do
+  #     expect(cat.id).to_not be_nil
+  #   end
 
-    it '#insert creates record with proper values' do
-      # pull the cat again
-      cat2 = Cat.find(cat.id)
+  #   it '#insert creates record with proper values' do
+  #     # pull the cat again
+  #     cat2 = Cat.find(cat.id)
 
-      expect(cat2.name).to eq('Gizmo')
-      expect(cat2.owner_id).to eq(1)
-    end
-  end
+  #     expect(cat2.name).to eq('Gizmo')
+  #     expect(cat2.owner_id).to eq(1)
+  #   end
+  # end
 
   # describe '#update' do
   #   it '#update changes attributes' do
@@ -97,15 +97,15 @@ describe SQLObject do
   #   end
   # end
 
-  # describe '#save' do
-  #   it '#save calls save/update as appropriate' do
-  #     human = Human.new
-  #     expect(human).to receive(:insert)
-  #     human.save
+  describe '#save' do
+    it '#save calls save/update as appropriate' do
+      human = Human.new
+      expect(human).to receive(:insert)
+      human.save
 
-  #     human = Human.find(1)
-  #     expect(human).to receive(:update)
-  #     human.save
-  #   end
-  # end
+      human = Human.find(1)
+      expect(human).to receive(:update)
+      human.save
+    end
+  end
 end
