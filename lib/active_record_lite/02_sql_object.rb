@@ -54,11 +54,25 @@ class SQLObject < MassObject
         #{self.table_name}
     SQL
 
-    Cat.parse_all(DBConnection.instance.execute(query))
+    self.parse_all(DBConnection.instance.execute(query))
   end
 
   def self.find(id)
-    # ...
+
+    table_n = self.table_name
+
+    query = <<-SQL
+      SELECT
+        *
+      FROM
+        #{table_n}
+      WHERE
+        #{table_n}.id = #{id}
+      LIMIT
+        1
+    SQL
+
+    self.parse_all(DBConnection.instance.execute(query)).first
   end
 
   def attributes
@@ -66,19 +80,33 @@ class SQLObject < MassObject
   end
 
   def insert
-    # ...
+    table_n = self.class.table_name
+    col_names = self.class.columns.map(&:to_s)[1..-1].join(', ')
+    attr_values = self.attribute_values
+    question_marks = (["?"] * attr_values.count).join(', ')
+
+    query = <<-SQL
+      INSERT INTO
+        #{table_n}(#{col_names})
+      VALUES
+        (#{question_marks})
+    SQL
+
+    DBConnection.instance.execute(query, attr_values)
+    self.id = Cat.all.last.id
   end
 
   def initialize(hash)
     # need to call columns so that we have attr_accessors XXX is this true?
     columns = self.class.columns
 
-    @attributes = hash
+    # @attributes = hash
 
-    # hash.each do |attr, val|
-      # inst_var = "@" + attr.to_s
-      # instance_variable_set(inst_var, val)
-    # end
+    @attributes = {}
+
+    hash.each do |attr, val|
+      @attributes[attr.to_sym] = val
+    end
   end
 
   def save
@@ -89,13 +117,24 @@ class SQLObject < MassObject
     # ...
   end
 
+  # returns an array of all the column names
   def attribute_values
-    # ...
+    attribute_values = []
+
+    attributes.each do |key, val|
+      attribute_values << val
+    end
+
+    attribute_values
   end
 end
 
 class Cat < SQLObject
 end
+
+
+
+
 
 # c = Cat.new      # puts "made setter '#{name}' for #{self}"
 hashes = [
@@ -103,10 +142,15 @@ hashes = [
         { name: 'cat2', owner_id: 2 }
       ]
 
-# cats = Cat.parse_all(hashes)
+cats = Cat.parse_all(hashes)
+
+cats[0].insert
 # p cats
 # p cats[0].name
-p Cat.all
+# p Cat.all[0].name
+# puts
+# puts
+# p Cat.find(1)
 
 
 # c = Cat.new(name: 'cat1', owner_id: 1)
