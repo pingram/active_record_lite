@@ -44,13 +44,13 @@ class SQLObject < MassObject
 
     columns = result.first.map(&:to_sym)
 
-    p self.methods.count
+    # p self.methods.count
     columns.each do |name|
       define_method(name) do
         attributes[name]
       end
 
-      p name
+      # p name
       # puts "made getter '#{name}' for #{self}"
 
       define_method("#{name}=".to_sym) do |arg|
@@ -58,7 +58,7 @@ class SQLObject < MassObject
       end
       # puts "made setter '#{name}' for #{self}"
     end
-    p self.methods.count
+    # p self.methods.count
 
     columns
   end
@@ -88,12 +88,13 @@ class SQLObject < MassObject
     # ...
   end
 
-  def initialize(*args)
+  def initialize(hash)
     columns = self.class.columns
     # columns_s = columns.map(&:to_s)
     # p columns_s
-    columns.each do |args|
-
+    hash.each do |attr, val|
+      inst_var = "@" + attr.to_s
+      instance_variable_set(inst_var, val)
     end
   end
 
@@ -121,7 +122,8 @@ hashes = [
 
 # cats = Cat.parse_all(hashes)
 
-Cat.new
+c = Cat.new(name: 'cat1', owner_id: 1)
+p c
 
 # Cat.columns
 # p cats.first.methods.sort
