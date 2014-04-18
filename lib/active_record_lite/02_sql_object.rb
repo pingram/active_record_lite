@@ -19,7 +19,7 @@ end
 
 class SQLObject < MassObject
   def self.columns
-    result = DBConnection.instance.execute2("SELECT * FROM cats")
+    result = DBConnection.instance.execute2("SELECT * FROM cats LIMIT 1")
 
     columns = result.first.map(&:to_sym)
 
@@ -46,7 +46,15 @@ class SQLObject < MassObject
   end
 
   def self.all
-    # ...
+    # XXX update the SQL query to not involve string interpolation
+    query = <<-SQL
+      SELECT
+        *
+      FROM
+        #{self.table_name}
+    SQL
+
+    Cat.parse_all(DBConnection.instance.execute(query))
   end
 
   def self.find(id)
@@ -95,9 +103,10 @@ hashes = [
         { name: 'cat2', owner_id: 2 }
       ]
 
-cats = Cat.parse_all(hashes)
-p cats
-p cats[0].name
+# cats = Cat.parse_all(hashes)
+# p cats
+# p cats[0].name
+p Cat.all
 
 
 # c = Cat.new(name: 'cat1', owner_id: 1)
