@@ -45,68 +45,68 @@ describe 'AssocOptions' do
     end
   end
 
-#   describe 'AssocOptions' do
-#     before(:all) do
-#       class Cat < SQLObject; end
+  describe 'AssocOptions' do
+    before(:all) do
+      class Cat < SQLObject; end
 
-#       class Human < SQLObject
-#         self.table_name = 'humans'
-#       end
-#     end
+      class Human < SQLObject
+        self.table_name = 'humans'
+      end
+    end
 
-#     it '#model_class returns class of associated object' do
-#       options = BelongsToOptions.new('human')
-#       expect(options.model_class).to eq(Human)
-#       expect(options.table_name).to eq('humans')
+    it '#model_class returns class of associated object' do
+      options = BelongsToOptions.new('human')
+      expect(options.model_class).to eq(Human)
+      expect(options.table_name).to eq('humans')
 
-#       options = HasManyOptions.new('cats', 'Human')
-#       expect(options.model_class).to eq(Cat)
-#       expect(options.table_name).to eq('cats')
-#     end
-#   end
-# end
+      options = HasManyOptions.new('cats', 'Human')
+      expect(options.model_class).to eq(Cat)
+      expect(options.table_name).to eq('cats')
+    end
+  end
+end
 
-# describe 'Associatable' do
-#   before(:each) { DBConnection.reset }
-#   after(:each) { DBConnection.reset }
+describe 'Associatable' do
+  before(:each) { DBConnection.reset }
+  after(:each) { DBConnection.reset }
 
-#   before(:all) do
-#     class Cat < SQLObject
-#       belongs_to :human, foreign_key: :owner_id
-#     end
+  before(:all) do
+    class Cat < SQLObject
+      belongs_to :human, foreign_key: :owner_id
+    end
 
-#     class Human < SQLObject
-#       self.table_name = 'humans'
+    class Human < SQLObject
+      self.table_name = 'humans'
 
-#       has_many :cats, foreign_key: :owner_id
-#       belongs_to :house
-#     end
+      has_many :cats, foreign_key: :owner_id
+      belongs_to :house
+    end
 
-#     class House < SQLObject
-#       has_many :humans
-#     end
-#   end
+    class House < SQLObject
+      has_many :humans
+    end
+  end
 
-#   describe '#belongs_to' do
-#     let(:breakfast) { Cat.find(1) }
-#     let(:devon) { Human.find(1) }
+  describe '#belongs_to' do
+    let(:breakfast) { Cat.find(1) }
+    let(:devon) { Human.find(1) }
 
-#     it 'fetches `human` from `Cat` correctly' do
-#       expect(breakfast).to respond_to(:human)
-#       human = breakfast.human
+    it 'fetches `human` from `Cat` correctly' do
+      expect(breakfast).to respond_to(:human)
+      human = breakfast.human
 
-#       expect(human).to be_instance_of(Human)
-#       expect(human.fname).to eq('Devon')
-#     end
+      expect(human).to be_instance_of(Human)
+      expect(human.fname).to eq('Devon')
+    end
 
-#     it 'fetches `house` from `Human` correctly' do
-#       expect(devon).to respond_to(:house)
-#       house = devon.house
+    it 'fetches `house` from `Human` correctly' do
+      expect(devon).to respond_to(:house)
+      house = devon.house
 
-#       expect(house).to be_instance_of(House)
-#       expect(house.address).to eq('26th and Guerrero')
-#     end
-#   end
+      expect(house).to be_instance_of(House)
+      expect(house.address).to eq('26th and Guerrero')
+    end
+  end
 
 #   describe '#has_many' do
 #     let(:ned) { Human.find(3) }

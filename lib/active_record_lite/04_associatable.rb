@@ -1,4 +1,5 @@
 require_relative '03_searchable'
+require_relative '02_sql_object'
 require 'active_support/inflector'
 
 # Phase IVa
@@ -10,11 +11,15 @@ class AssocOptions
   )
 
   def model_class
-    # ...
+    @class_name.constantize
   end
 
   def table_name
-    # ...
+    unless @class_name == "Human"
+      @class_name.underscore.pluralize
+    else
+      "humans"
+    end
   end
 end
 
@@ -52,7 +57,10 @@ end
 module Associatable
   # Phase IVb
   def belongs_to(name, options = {})
-    # ...
+    options = BelongsToOptions.new(name, options)
+    # p options
+    p options.foreign_key
+    p self.send(options.foreign_key)
   end
 
   def has_many(name, options = {})
@@ -65,8 +73,11 @@ module Associatable
 end
 
 class SQLObject
-  # extend Searchable
+  extend Associatable
 end
 
-b = BelongsToOptions.new(:owner)
-p b
+class Human < SQLObject
+end
+
+h = Human.all.first
+p h

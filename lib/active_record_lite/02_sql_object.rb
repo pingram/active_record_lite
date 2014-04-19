@@ -3,6 +3,10 @@ require_relative 'db_connection'
 require_relative '01_mass_object'
 require 'active_support/inflector'
 
+ActiveSupport::Inflector.inflections do |inflect|
+  inflect.irregular 'human', 'humans'
+end
+
 class MassObject
   def self.parse_all(results)
     new_objects = []
@@ -41,7 +45,6 @@ class SQLObject < MassObject
   end
 
   def self.table_name
-    # does not work for human (i.e. humen) XXX
     @table_name ||= self.to_s.underscore.pluralize
   end
 
