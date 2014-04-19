@@ -20,13 +20,32 @@ end
 
 class BelongsToOptions < AssocOptions
   def initialize(name, options = {})
-    # ...
+    defaults = {
+      class_name: name.to_s.singularize.camelcase,
+      foreign_key: (name.to_s + "_id").to_sym,
+      primary_key: :id
+    }
+    new_options = defaults.merge(options)
+
+    @class_name = new_options[:class_name]
+    @foreign_key = new_options[:foreign_key]
+    @primary_key = new_options[:primary_key]
   end
 end
 
 class HasManyOptions < AssocOptions
   def initialize(name, self_class_name, options = {})
-    # ...
+    defaults = {
+      class_name: name.to_s.singularize.camelcase,
+      foreign_key: (self_class_name.singularize.underscore
+                      .to_s + "_id").to_sym,
+      primary_key: :id
+    }
+    new_options = defaults.merge(options)
+
+    @class_name = new_options[:class_name]
+    @foreign_key = new_options[:foreign_key]
+    @primary_key = new_options[:primary_key]
   end
 end
 
@@ -46,5 +65,8 @@ module Associatable
 end
 
 class SQLObject
-  # Mixin Associatable here...
+  # extend Searchable
 end
+
+b = BelongsToOptions.new(:owner)
+p b
