@@ -15,11 +15,7 @@ class AssocOptions
   end
 
   def table_name
-    unless @class_name == "Human"
-      @class_name.underscore.pluralize
-    else
-      "humans"
-    end
+    @class_name.underscore.pluralize
   end
 end
 
@@ -35,6 +31,7 @@ class BelongsToOptions < AssocOptions
     @class_name = new_options[:class_name]
     @foreign_key = new_options[:foreign_key]
     @primary_key = new_options[:primary_key]
+    p self
   end
 end
 
@@ -59,8 +56,13 @@ module Associatable
   def belongs_to(name, options = {})
     options = BelongsToOptions.new(name, options)
     # p options
-    p options.foreign_key
+    # options.foreign_key
+    p self
+    p self.class
+    debugger
     p self.send(options.foreign_key)
+    # p self
+    # p self.send(:id)
   end
 
   def has_many(name, options = {})
@@ -79,5 +81,16 @@ end
 class Human < SQLObject
 end
 
-h = Human.all.first
-p h
+class Cat < SQLObject
+end
+
+# c = Cat.find(1)
+# h = Human.find(1)
+# p c
+# p h
+# p c.send(:name)
+
+b = BelongsToOptions.new("Human")
+
+# h = Human.all.first
+# h.belongs_to(:cat)
