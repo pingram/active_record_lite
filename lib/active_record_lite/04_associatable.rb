@@ -31,7 +31,6 @@ class BelongsToOptions < AssocOptions
     @class_name = new_options[:class_name]
     @foreign_key = new_options[:foreign_key]
     @primary_key = new_options[:primary_key]
-    # p self
   end
 end
 
@@ -54,32 +53,21 @@ end
 module Associatable
   # Phase IVb
   def belongs_to(name, options = {})
-    # debugger
-    bto = BelongsToOptions.new(name, options)
-    # p options
-    # options.foreign_key
-    # p self
-    # p self.class
-    # debugger
-    # self.send(new_options.foreign_key)
-    debugger
-    cols = self.columns
-    debugger
-    tn = bto.table_name
-    mc = bto.model_class
-    fk = send(bto.foreign_key)
-    debugger
-
     define_method(name) do
-      mc.where(id: fk)
+      bto = BelongsToOptions.new(name, options)
+      mc = bto.model_class
+      fk_val = self.send(bto.foreign_key)
+      mc.where(bto.primary_key => fk_val).first
     end
-    # debugger
-    # p self.owner
-    # p self.send(:id)
   end
 
   def has_many(name, options = {})
-    # ...
+    define_method(name) do
+      hmo = HasManyOptions.new(name, self.class.table_name, options)
+      mc = hmo.model_class
+      fk_val = self.id
+      mc.where(hmo.foreign_key => fk_val)
+    end
   end
 
   def assoc_options
@@ -90,22 +78,3 @@ end
 class SQLObject
   extend Associatable
 end
-
-# class Human < SQLObject
-#   extend Associatable
-# end
-
-# class Cat < SQLObject
-#   extend Associatable
-# end
-
-# c = Cat.find(1)
-# h = Human.find(1)
-# p c
-# p h
-# p c.send(:name)
-
-# b = BelongsToOptions.new("Human")
-
-# h = Human.all.first
-# h.belongs_to(:cat)
